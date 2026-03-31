@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+data/athleteiq.db
+data/apollo.db
+node_modules/
+frontend/dist/
+.DS_Store

@@ -1,0 +1,12 @@
+.env
+.git
+.DS_Store
+__pycache__
+*.pyc
+data/athleteiq.db
+data/apollo.db
+frontend/node_modules
+frontend/dist
+*.pdf
+written/
+.claude/
