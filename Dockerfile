@@ -48,8 +48,6 @@ COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 # Set environment
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
-ENV PORT=8000
+EXPOSE 8000
 
-EXPOSE ${PORT}
-
-CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"]
+CMD ["python", "-c", "import os, uvicorn; uvicorn.run('backend.main:app', host='0.0.0.0', port=int(os.environ.get('PORT', 8000)))"]
