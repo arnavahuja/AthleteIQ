@@ -55,7 +55,8 @@ def _friendly_error(e: Exception, step: str) -> str:
         return f"{step}: The AI model is temporarily unavailable. Please try again shortly."
     if "permission" in msg.lower() or "api key" in msg.lower():
         return f"{step}: API authentication error. Please check the API key configuration."
-    return f"{step}: An unexpected error occurred. Please try again."
+    # Include the actual error for debugging
+    return f"{step}: {type(e).__name__}: {msg}"
 
 
 async def _call_with_retry(func, *args, step_name="Operation"):
@@ -199,6 +200,8 @@ async def voice_endpoint(audio: UploadFile = File(...)):
 @router.get("/health")
 async def health():
     """Check system status."""
+    from backend.config import settings as _settings
+
     try:
         conn = get_connection(read_only=True)
         cursor = conn.execute(
@@ -209,10 +212,17 @@ async def health():
     except Exception as e:
         return {"status": "error", "error": str(e)}
 
+    # Show whether key is configured (masked for security)
+    key = _settings.anthropic_api_key
+    key_status = f"set ({key[:8]}...{key[-4:]})" if len(key) > 12 else ("empty" if not key else "too_short")
+
     return {
         "status": "ok",
         "tables": tables,
         "chunk_count": get_chunk_count(),
+        "api_key_status": key_status,
+        "model": _settings.claude_model,
+        "db_path": _settings.db_path,
     }
 
 
